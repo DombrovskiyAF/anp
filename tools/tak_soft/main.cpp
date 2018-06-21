@@ -2,12 +2,12 @@
 #include "../../anp/anppdusequence.h"
 #include "../../anp/anppdu.h"
 #include <fstream>
-
+//1
 using namespace std;
 
 int main()
 {
-    cout << "Start!" << endl;
+    cout << "Start!" << endl;     
 
     AnpPduSequence s;
     s.readPcapFile("c:\\projects\\anp.git\\data\\mix.cap", 1000); // считать первые 1000 пакетов из файла
@@ -22,12 +22,17 @@ int main()
 
     // Получить длину самого большого пакета
 
-    int max_lenght = 0;
+    int max_lenght = 0;/*
     for (int num = 0; num < s.getSize(); num++) {
         AnpPdu pdu = s.getPdu (num);
         pcap_pkthdr phdr = pdu.getPcapHdr();
         if (phdr.caplen > max_lenght) max_lenght = phdr.caplen;
-    }
+    }*/
+
+    // Установление ограничения для поиска констант и счетчиков
+
+    max_lenght = s.findIp(1); // например, до позиции IP
+    cout << "Ipv4 pos = " << max_lenght << endl;
 
     // Формирование массива встречаемости байт
 
@@ -38,13 +43,14 @@ int main()
         }
     }
 
-    // Работа с пакетом № num
+    // Работа с пакетом № num для поиска констант
 
     for (int num = 0; num < s.getSize(); num++) {
         AnpPdu pdu = s.getPdu (num);
         uint8_t* pdu_data = pdu.getData();
-        pcap_pkthdr phdr = pdu.getPcapHdr();
-        for (int i = 0; i < phdr.caplen; i++) { // i - порядковый номер текущего байта byte из пакета num
+        //pcap_pkthdr phdr = pdu.getPcapHdr();
+        //for (int i = 0; i < phdr.caplen; i++) { // i - порядковый номер текущего байта byte из пакета num
+        for (int i = 0; i < max_lenght; i++) {
             uint byte = pdu_data[i];
             for (uint j = 0; j < 256; j++) { // сравнение с каждым из 256 возможных байт
                 if (byte == j) {
@@ -53,9 +59,7 @@ int main()
             }
         }
     }
-
-    // Вычисление частоты
-
+    // вычисление частоты
     ofstream cac("const_and_count.csv"); // дополнительный вывод для отслеживания
     cout << "Constants:\n"; int const_count = 0;
     for (int i = 0; i < 256; i++) {
@@ -69,6 +73,35 @@ int main()
             }
         }
         cac << "\n";
+    }
+
+    // Поиск счетчиков
+
+    int counters[s.getSize()][max_lenght]; // формирование массива пакетов [всего_пакетов][выставленное_ограничение]
+    for (int num = 0; num < s.getSize(); num++) {
+        AnpPdu pdu = s.getPdu (num);
+        uint8_t* pdu_data = pdu.getData();
+        //pcap_pkthdr phdr = pdu.getPcapHdr();
+        //for (int i = 0; i < phdr.caplen; i++) {
+        for (int i = 0; i < max_lenght; i++) {
+            uint byte = pdu_data[i];
+            counters[num][i] = byte;
+        }
+    }
+    // непосредственно поиск
+    for (int i = 0; i < max_lenght; i++) { // идем по столбцам
+        int no_count = 0, no_const = 0;
+        for (int j = 0; j < s.getSize()-2; j++) {
+            int difference1 = counters[j+1][i] - counters[j][i]; // разница между соседними значениями в столбце
+            int difference2 = counters[j+2][i] - counters[j+1][i]; // следующая разница
+            if (difference1 == difference2 || difference1 == 0 || difference2 == 0) { // если разницы одинаковые, либо увеличение счетчика не произошло
+                if (difference1 > 0) no_const = 1; // если хоть раз было увеличение, то это не константа (чтобы не пересекаться с поиском констант)
+            }
+            else no_count = 1; // если разницы различны - в столбце нет счетчика
+        }
+        if (no_count == 0 && no_const == 1) { // если все условия выполнились - выводим позицию счетчика
+            cout << "Counter pos:\n" << i;
+        }
     }
 
     cout << "STOP." << endl;
