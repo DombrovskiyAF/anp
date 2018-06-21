@@ -13,9 +13,15 @@ public:
     AnpPduSequence();
     ~AnpPduSequence();
     void readPcapFile(std::string fileName, uint quantity = 0);
+
+    int getSize();
+    AnpPdu getPdu(uint32_t num);
+
     void printAttr();
     int printPduData(uint num);
     int findIp(uint num);
+    int getMaxPduLen (){ return m_maxLen; }
+    int getMinPduLen (){ return m_minLen; }
 
 private:
     std::string m_fileName;

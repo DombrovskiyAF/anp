@@ -9,7 +9,7 @@ int main()
 {
     cout << "Start!" << endl;
     AnpPduSequence s;
-    s.readPcapFile("c:\\projects\\anp\\data\\mix.cap", 1000);
+    s.readPcapFile("c:\\projects\\anp.git\\data\\mix.cap", 1000);
     s.printAttr();
 
     s.printPduData(5);

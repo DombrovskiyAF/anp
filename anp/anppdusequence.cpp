@@ -42,7 +42,7 @@ void AnpPduSequence::readPcapFile(string fileName, uint quantity)
     uint cnt = 0;
     while (!f.eof())
     {
-        if (quantity > 0 && cnt >= quantity) break;
+        if (quantity > 0 && cnt >= quantity ) break;
         cnt++;
         pcap_pkthdr pcapHdr;
         f.read((char*) &pcapHdr, sizeof(pcapHdr));
@@ -96,3 +96,12 @@ int AnpPduSequence::findIp(uint num)
     return m_packets[num].findIpv4();
 }
 
+int AnpPduSequence::getSize()
+{
+    return m_packets.size ();
+}
+
+AnpPdu AnpPduSequence::getPdu(uint32_t num)
+{
+    return m_packets.at(num);
+}

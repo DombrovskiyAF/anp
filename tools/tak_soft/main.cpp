@@ -1,16 +1,16 @@
 #include <iostream>
-#include "anppdusequence.h"
-#include "anppdu.h"
+#include "../../anp/anppdusequence.h"
+#include "../../anp/anppdu.h"
 #include <fstream>
 
 using namespace std;
 
 int main()
 {
-    cout << "Start!" << endl;     
+    cout << "Start!" << endl;
 
     AnpPduSequence s;
-    s.readPcapFile("mix.cap", 1000); // считать первые 1000 пакетов из файла
+    s.readPcapFile("c:\\projects\\anp.git\\data\\mix.cap", 1000); // считать первые 1000 пакетов из файла
     //s.readPcapFile("mix.cap"); // считать все пакеты
     s.printAttr();
     cout << endl;
