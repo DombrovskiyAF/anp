@@ -2,7 +2,7 @@
 #include "../../anp/anppdusequence.h"
 #include "../../anp/anppdu.h"
 #include <fstream>
-//1
+
 using namespace std;
 
 int main()
