@@ -11,7 +11,7 @@ using namespace std;
 AnpPduSequence::AnpPduSequence():
 m_fileName("")
 {
-    m_pduCol= -1;
+    //m_pduCol= -1;
 }
 
 AnpPduSequence::~AnpPduSequence()
@@ -25,7 +25,7 @@ void AnpPduSequence::readPcapFile(string fileName, uint quantity)
     f.open(fileName.c_str(), ios::in | ios::binary);
     if (!f)
     {
-        cout << "File not open." << endl;
+        cout << "File not open: " << fileName << endl;
         return;
     }
 
@@ -33,7 +33,7 @@ void AnpPduSequence::readPcapFile(string fileName, uint quantity)
 
     f.read((char*)&m_fHeader, sizeof(m_fHeader));
 
-    m_pduCol = 0;
+    int pduCol = 0;
     m_minLen = 0xFFFF;
     m_maxLen = 0;
     m_sredLen = 0;
@@ -51,14 +51,14 @@ void AnpPduSequence::readPcapFile(string fileName, uint quantity)
         AnpPdu pdu;
         pdu.setData(pcapHdr, pduData);
         m_packets.push_back(pdu);
-        m_pduCol++;
+        pduCol++;
         if (pcapHdr.caplen > m_maxLen)
             m_maxLen = pcapHdr.caplen;
         if (pcapHdr.caplen < m_minLen)
             m_minLen = pcapHdr.caplen;
         m_sredLen += pcapHdr.caplen;
     }
-    m_sredLen = m_sredLen / m_pduCol;
+    m_sredLen = m_sredLen / pduCol;
     f.close();
 }
 
@@ -69,7 +69,7 @@ void AnpPduSequence::printAttr()
          << ":" << endl << dec;
 
     cout << "Link type: "  << m_fHeader.linktype << endl;
-    cout << "Col: "  << m_pduCol << endl;
+    cout << "Col: "  << m_packets.size() << endl;
     cout << "min len: "  << m_minLen << endl;
     cout << "max len: "  << m_maxLen << endl;
     cout << "sred len: "  << m_sredLen << endl;

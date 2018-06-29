@@ -3,7 +3,11 @@ CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
 
-SOURCES += main.cpp
+HEADERS += \
+    anpstatisticalcalc.h
+
+SOURCES += main.cpp \
+    anpstatisticalcalc.cpp
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../../anp/release/ -lanp
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../../anp/debug/ -lanp

@@ -8,7 +8,9 @@ using namespace std;
 
 AnpPdu::AnpPdu():
 m_data(NULL)
-{}
+{
+
+}
 
 AnpPdu::AnpPdu(const AnpPdu &pdu )
 {
