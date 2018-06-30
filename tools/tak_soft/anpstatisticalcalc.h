@@ -9,6 +9,10 @@ class AnpStatisticalCalc
 public:
     AnpStatisticalCalc();
 
+    void constSearch(AnpPduSequence *pduSeq, int max_lenght);
+    void countSearch(AnpPduSequence *pduSeq, int max_lenght);
+    void bitShaping(AnpPduSequence *pduSeq, int max_lenght);
+
     int doSomething(AnpPduSequence *pduSeq);
 };
 
