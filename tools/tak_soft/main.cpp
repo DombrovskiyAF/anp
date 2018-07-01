@@ -5,12 +5,11 @@
 
 using namespace std;
 
-int main()
-{
+int main() {
     cout << "Start!\n\n";
 
     AnpPduSequence s;
-    s.readPcapFile("C:\\anp\\anp-master\\data\\temp.cap", 100); // считать первые 1000 пакетов из файла
+    s.readPcapFile("e:\\anp-master\\data\\temp.cap", 100); // считать первые 1000 пакетов из файла
     //s.readPcapFile("mix.cap"); // считать все пакеты
     s.printAttr(); cout << endl;
 
