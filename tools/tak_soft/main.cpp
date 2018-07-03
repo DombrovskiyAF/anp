@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 
     AnpPduSequence s;
     // имя файла передавать 1ым элементом коммандной строки
-    s.readPcapFile(argv[1], 1000); // считать первые 1000 пакетов из файла
+    s.readPcapFile(argv[1], 100); // считать первые 1000 пакетов из файла
 
     s.printAttr(); cout << endl;
 

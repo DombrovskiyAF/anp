@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
+#include <QString>
 
 #include "anpstatisticalcalc.h"
 
@@ -13,26 +14,24 @@ AnpStatisticalCalc::AnpStatisticalCalc() {
 void AnpStatisticalCalc::bitShaping(AnpPduSequence *pduSeq, int max_lenght) {
     // формирование массива пакетов [всего_пакетов][выставленное_ограничение]
     int bit_packets[pduSeq->getSize()][max_lenght]; // массив байт в битовом представлении
-    int dec_packets[pduSeq->getSize()][max_lenght]; // массив байт в десятичном предст. (для проверки. будет удален)
     for (int num = 0; num < pduSeq->getSize(); num++) {
         AnpPdu pdu = pduSeq->getPdu(num);
         uint8_t* pdu_data = pdu.getData();
-        //pcap_pkthdr phdr = pdu.getPcapHdr();
-        //for (int i = 0; i < phdr.caplen; i++) {
         for (int i = 0; i < max_lenght; i++) {
             uint byte = pdu_data[i];
             char b[100];
             itoa(byte,b,2);
             int c; c = strtol(b, NULL, 10);
             bit_packets[num][i] = c;
-            dec_packets[num][i] = byte;
         }
     }
     //Вывод-проверка
-    cout << "\n\t\t* PROBEROCHNIY VIVOD BIT *\n";
-    for (int num = 0; num < 4; num++) {
+    cout << "\n* PROBEROCHNIY VIVOD BIT 20 PAKETOV S OGRANICHENIEM 4 BAYTA\n";
+    for (int num = 0; num < 20; num++) {
         for (int i = 0; i < 4; i++) {
-            cout << bit_packets[num][i] << " = " << dec_packets[num][i] << " \t";
+            QString temp = QString::number(bit_packets[num][i]);
+            while (temp.size() < 8) temp = "0" + temp;
+            cout << "  " << temp.toLocal8Bit().constData() << " \t";
         }
         cout << endl;
     }
@@ -53,8 +52,6 @@ void AnpStatisticalCalc::constSearch(AnpPduSequence *pduSeq, int max_lenght) {
     for (int num = 0; num < pduSeq->getSize(); num++) {
         AnpPdu pdu = pduSeq->getPdu(num);
         uint8_t* pdu_data = pdu.getData();
-        //pcap_pkthdr phdr = pdu.getPcapHdr();
-        //for (int i = 0; i < phdr.caplen; i++) { // i - порядковый номер текущего байта byte из пакета num
         for (int i = 0; i < max_lenght; i++) {
             uint byte = pdu_data[i];
             for (uint j = 0; j < 256; j++) { // сравнение с каждым из 256 возможных байт
@@ -79,7 +76,6 @@ void AnpStatisticalCalc::constSearch(AnpPduSequence *pduSeq, int max_lenght) {
         }
         cac << "\n";
     }
-
 }
 
 void AnpStatisticalCalc::countSearch(AnpPduSequence *pduSeq, int max_lenght) {
@@ -109,7 +105,6 @@ void AnpStatisticalCalc::countSearch(AnpPduSequence *pduSeq, int max_lenght) {
                 }
             }
             else no_count = 1; // если разницы различны - в столбце нет счетчика
-
         }
         if (no_count == 0 && no_const == 1) { // если все условия выполнились - выводим позицию счетчика
             cout << "\n* Counter pos:\n  " << i << " (with step = " << step << ") \n";
