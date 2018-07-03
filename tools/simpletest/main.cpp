@@ -5,11 +5,15 @@
 
 using namespace std;
 
-int main()
+int main(int argc, char *argv[])
 {
     cout << "Start!" << endl;
     AnpPduSequence s;
-    s.readPcapFile("c:\\projects\\anp.git\\data\\mix.cap", 1000);
+
+    if (argc < 2)
+        return 0;
+
+    s.readPcapFile(argv[1], 1000);
     s.printAttr();
 
     s.printPduData(5);
