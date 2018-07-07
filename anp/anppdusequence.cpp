@@ -69,7 +69,7 @@ void AnpPduSequence::printAttr()
          << ":" << endl << dec;
 
     cout << "Link type: "  << m_fHeader.linktype << endl;
-    cout << "Col: "  << m_packets.size() << endl;
+    cout << "Col: "  << m_packets.size()-1 << endl;
     cout << "min len: "  << m_minLen << endl;
     cout << "max len: "  << m_maxLen << endl;
     cout << "sred len: "  << m_sredLen << endl;
@@ -98,7 +98,7 @@ int AnpPduSequence::findIp(uint num)
 
 int AnpPduSequence::getSize()
 {
-    return m_packets.size ();
+    return m_packets.size()-1;
 }
 
 AnpPdu AnpPduSequence::getPdu(uint32_t num)
