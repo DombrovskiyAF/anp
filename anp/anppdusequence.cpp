@@ -42,15 +42,28 @@ void AnpPduSequence::readPcapFile(string fileName, uint quantity)
     uint cnt = 0;
     while (!f.eof())
     {
-        if (quantity > 0 && cnt >= quantity ) break;
+        if (quantity > 0 && cnt >= quantity )
+            break;
         cnt++;
+
         pcap_pkthdr pcapHdr;
         f.read((char*) &pcapHdr, sizeof(pcapHdr));
+        if (f.gcount() != sizeof(pcapHdr))
+        {
+            break;
+        }
+
         unsigned char *pduData = new unsigned char[pcapHdr.caplen];
         f.read((char*)pduData, pcapHdr.caplen);
+        if (f.gcount() != pcapHdr.caplen)
+        {
+            break;
+        }
+
         AnpPdu pdu;
         pdu.setData(pcapHdr, pduData);
         m_packets.push_back(pdu);
+
         pduCol++;
         if (pcapHdr.caplen > m_maxLen)
             m_maxLen = pcapHdr.caplen;
@@ -69,7 +82,7 @@ void AnpPduSequence::printAttr()
          << ":" << endl << dec;
 
     cout << "Link type: "  << m_fHeader.linktype << endl;
-    cout << "Col: "  << m_packets.size()-1 << endl;
+    cout << "Col: "  << m_packets.size() << endl;
     cout << "min len: "  << m_minLen << endl;
     cout << "max len: "  << m_maxLen << endl;
     cout << "sred len: "  << m_sredLen << endl;
@@ -98,7 +111,7 @@ int AnpPduSequence::findIp(uint num)
 
 int AnpPduSequence::getSize()
 {
-    return m_packets.size()-1;
+    return m_packets.size();
 }
 
 AnpPdu AnpPduSequence::getPdu(uint32_t num)
