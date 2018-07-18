@@ -11,6 +11,65 @@ AnpStatisticalCalc::AnpStatisticalCalc() {
 
 }
 
+void AnpStatisticalCalc::sizeFilter(AnpPduSequence *pduSeq) {
+    int *temp_sizes = new int[pduSeq->getMaxPduLen()]; // массив хранения всех длин пакетов
+    for (int i = 0; i < pduSeq->getMaxPduLen(); i++) {
+        temp_sizes[i] = 0;
+    } // занулил
+    int j_now = 0; // текущая позиция в массиве
+    for (int i = 0; i < pduSeq->getSize(); i++) {
+        AnpPdu pdu = pduSeq->getPdu(i);
+        pcap_pkthdr phdr = pdu.getPcapHdr();
+        int size = phdr.caplen, repeat = 0;
+        for (int j = 0; j < pduSeq->getMaxPduLen(); j++) {
+            if (size == temp_sizes[j]) repeat = 1; // если встретился уже такой размер
+        }
+        if (repeat == 0) { // если не встретился
+            temp_sizes[j_now] = size; // запись
+            j_now++; // ++ pos
+        }
+    }
+    int sizes[j_now];
+    for (int i = 0; i < j_now; i++) {
+        sizes[i] = temp_sizes[i];
+    }
+    delete [] temp_sizes; // переписал в новый статик и удалил старый динамический
+
+    //--------------------------------------------------------------------------------------
+    // Сортировка пузырьком
+
+    int temp;
+    for (int i = 0; i < j_now; i++) {
+        for (int j = 0; j < j_now - i; j++) {
+            if (sizes[j] > sizes[j + 1]) {
+                temp = sizes[j];
+                sizes[j] = sizes[j + 1];
+                sizes[j + 1] = temp;
+            }
+        }
+    }
+
+
+    //--------------------------------------------------------------------------------------
+    //Переписывание пакетов
+
+    for (int i = 0; i < j_now; i++) { //i = 1; // на i=1 12 пакетов размера 48
+        vector <AnpPdu> filter_packets;
+        for (int j = 0; j < pduSeq->getSize(); j++) {
+            AnpPdu pdu = pduSeq->getPdu(j);
+            pcap_pkthdr phdr = pdu.getPcapHdr();
+            int size = phdr.caplen;
+            if (size == sizes[i]) {
+                filter_packets.push_back(pdu);
+            }
+        }
+        cout << "\n** For packets of size " << sizes[i] << " bytes: " << endl;
+
+        // ЗДЕСЬ ПРИМЕНЯТЬ АЛГОРИТМЫ К ВЕКТОРУ filter_packets
+
+    }
+}
+
 void AnpStatisticalCalc::bitConstSearch(AnpPduSequence *pduSeq, int max_lenght) {
     int bit_packets[pduSeq->getSize()][max_lenght]; // массив байт [всего_пакетов][выставленное_ограничение] в битовом представлении
     for (int num = 0; num < pduSeq->getSize(); num++) {

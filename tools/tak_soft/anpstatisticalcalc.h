@@ -12,6 +12,7 @@ public:
     void constSearch(AnpPduSequence *pduSeq, int max_lenght);
     void countSearch(AnpPduSequence *pduSeq, int max_lenght);
     void bitConstSearch(AnpPduSequence *pduSeq, int max_lenght);
+    void sizeFilter (AnpPduSequence *pduSeq);
 };
 
 #endif // ANPSTATISTICALCALC_H

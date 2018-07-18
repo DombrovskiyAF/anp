@@ -25,9 +25,10 @@ int main(int argc, char *argv[])
     cout << "Constraint position = " << max_lenght << endl;
 
     AnpStatisticalCalc sc;
-    sc.constSearch(&s, max_lenght);
-    sc.bitConstSearch(&s, max_lenght);
-    sc.countSearch(&s, max_lenght);    
+    //sc.constSearch(&s, max_lenght);
+    //sc.bitConstSearch(&s, max_lenght);
+    //sc.countSearch(&s, max_lenght);
+    sc.sizeFilter(&s);
 
     cout << "\nStop!" << endl;
     return 0;
